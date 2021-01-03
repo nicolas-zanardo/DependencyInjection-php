@@ -1,0 +1,112 @@
+# PARAMETRE
+parameters:
+  mailer.gmail_user: 'niko@gmail.com'
+  mailer.gmail_password: '321'
+  firstName: "my firstName"
+
+# SERVICES 
+services:
+  # ⚠ _intanceof n'est utilisé uniquement que dans un fichier
+  # _instanceof:
+  #   App\HasLoggerInterface:
+  #     tags: ['with_logger']
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    bind:
+      $firstName: "%firstName%"
+  
+  # RESOURCE
+  App\:
+    resource: '../src/*'
+    exclude: '../src/{DependencyInjection}'
+
+  App\Controller\OrderController:
+    public: true
+    # calls: 
+    #   - method: sayHello
+    #     arguments: ['everybody', 33]
+    #   - method: setSecondaryMailer
+    #     argument: '@mailer.gmail'
+  
+  App\Mailer\GmailMailer:
+    arguments: [
+      "%mailer.gmail_user%",
+      "%mailer.gmail_password%"      
+    ]
+
+  App\Texter\SmsTexter:
+    arguments: [
+      "smtp://127.0.0.1",
+      "root",
+      "123"
+    ]  
+  
+  App\Texter\TexterInterface: '@App\Texter\SmsTexter'
+  App\Mailer\MailerInterface: '@App\Mailer\GmailMailer'
+
+  order_controller: 
+    alias: App\Controller\OrderController
+    public: true
+
+
+#####################
+#     ARCHIVES  
+#####################
+  # order_controller:
+  #   class: App\Controller\OrderController
+  #   public: true
+  #   calls: 
+  #     - method: sayHello
+  #       arguments: ['everybody', 33]
+  #     - method: setSecondaryMailer
+  #       argument: '@mailer.gmail'
+  #   # arguments:
+  #   #   $firstName: "my firstName"
+  
+  # database:
+  #   class: App\Database\Database
+
+  # logger:
+  #   class: App\Logger
+
+  # texter.sms:
+  #   #autoconfigure: true # instanceof (registerForAutoconfiguration) dans index.php
+  #   class: App\Texter\SmsTexter
+  #   arguments: [
+  #     "service.sms.com",
+  #     "apikey123"
+  #   ]
+  
+  # mailer.gmail:
+  #   #autoconfigure: true # instanceof (registerForAutoconfiguration) dans index.php
+  #   class: App\Mailer\GmailMailer
+  #   arguments: [
+  #     "%mailer.gmail_user%",
+  #     "%mailer.gmail_password%"      
+  #   ]
+  
+  # mailer.smtp:
+  #   class: App\Mailer\SmtpMailer
+  #   arguments: [
+  #     "smtp://127.0.0.1",
+  #     "root",
+  #     "123"
+  #   ]
+  
+  # texter.fax:
+  #   class: App\Texter\FaxTexter
+
+  # # ALIAS  
+  # App\Controller\OrderController:
+  #   alias: order_controller
+  #   public: true
+  # App\Database\Database: '@database'
+  # App\Mailer\GmailMailer: '@mailer.gmail'
+  # App\Mailer\SmtpMailer: '@mailer.smtp'
+  # App\Texter\SmsTexter: '@texter.sms'
+  # App\Texter\FaxTexter: '@texter.fax'
+  # App\Logger: '@logger'
+  # App\Texter\TexterInterface: '@texter.sms'
+  # App\Mailer\MailerInterface: '@mailer.gmail'
